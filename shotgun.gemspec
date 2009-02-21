@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.files = %w[
     README
+    COPYING
     Rakefile
     shotgun.gemspec
     lib/shotgun.rb

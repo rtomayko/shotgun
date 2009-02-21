@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+libdir = "#{File.dirname(File.dirname(__FILE__))}/lib"
+$LOAD_PATH.unshift libdir unless $LOAD_PATH.include?(libdir)
+
+require 'shotgun'
+
+options = { :Port => 5001, :Host => '0.0.0.0' }
+app = Shotgun.new(*ARGV)
+
+server =
+  begin
+    Rack::Handler::Mongrel
+  rescue LoadError => e
+    Rack::Handler::WEBrick
+  end
+
+server.run app, options

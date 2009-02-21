@@ -7,7 +7,7 @@ require 'optparse'
 
 automatic = false
 server = nil
-env = "development"
+env = ENV['RACK_ENV'] || 'development'
 daemonize = false
 pid = nil
 options = {:Port => 9393, :Host => "0.0.0.0", :AccessLog => []}
@@ -76,8 +76,6 @@ opts = OptionParser.new("", 24, '  ') { |opts|
   opts.parse! ARGV
 }
 
-require 'pp'  if $DEBUG
-
 config = ARGV[0] || "config.ru"
 abort "configuration #{config} not found"  unless File.exist? config
 
@@ -95,35 +93,24 @@ unless server = Rack::Handler.get(server)
   end
 end
 
-p server  if $DEBUG
-
 app_wrapper =
   lambda do |inner_app|
-    case env
-    when "development"
+    if env == 'development'
       Rack::Builder.new {
-        use Rack::CommonLogger, $stderr
         use Rack::ShowExceptions
         use Rack::Lint
         run inner_app
       }.to_app
-    when "deployment"
-      Rack::Builder.new {
-        use Rack::CommonLogger, $stderr
-        run inner_app
-      }.to_app
-    when "none"
+    else
       inner_app
     end
   end
 
-if $DEBUG
-  pp app
-  pp app_wrapper
-end
+ENV['RACK_ENV'] = env
 
 require 'shotgun'
 app = Shotgun.new(config, app_wrapper)
+
 server.run app, options do |inst|
   puts "== Shotgun starting #{server.to_s} on #{options[:Host]}:#{options[:Port]}"
 end

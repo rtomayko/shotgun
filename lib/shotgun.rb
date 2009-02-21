@@ -4,8 +4,9 @@ require 'thread'
 class Shotgun
   attr_reader :rackup_file
 
-  def initialize(rackup_file)
+  def initialize(rackup_file, wrapper)
     @rackup_file = rackup_file
+    @wrapper = wrapper || lambda { |inner_app| inner_app }
   end
 
   @@mutex = Mutex.new
@@ -36,17 +37,27 @@ class Shotgun
 
   # ==== Stuff that happens in the forked child process.
 
-  def inner_app
-    config = File.read(rackup_file)
-    eval "Rack::Builder.new {( #{config}\n )}.to_app", nil, rackup_file
-  end
-
   def proceed_as_child
     @reader.close
-    status, headers, body = inner_app.call(@env)
+    app = assemble_app
+    status, headers, body = app.call(@env)
     Marshal.dump([status, headers.to_hash, slurp(body)], @writer)
     @writer.close
     exit! 0
+  end
+
+  def assemble_app
+    @wrapper.call(inner_app)
+  end
+
+  def inner_app
+    if rackup_file =~ /\.ru$/
+      config = File.read(rackup_file)
+      eval "Rack::Builder.new {( #{config}\n )}.to_app", nil, rackup_file
+    else
+      require rackup_file
+      Object.const_get(File.basename(rackup_file, '.rb').capitalize)
+    end
   end
 
   def slurp(body)

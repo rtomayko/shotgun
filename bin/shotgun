@@ -3,16 +3,127 @@
 libdir = "#{File.dirname(File.dirname(__FILE__))}/lib"
 $LOAD_PATH.unshift libdir unless $LOAD_PATH.include?(libdir)
 
-require 'shotgun'
+require 'optparse'
 
-options = { :Port => 5001, :Host => '0.0.0.0' }
-app = Shotgun.new(*ARGV)
+automatic = false
+server = nil
+env = "development"
+daemonize = false
+pid = nil
+options = {:Port => 9393, :Host => "0.0.0.0", :AccessLog => []}
 
-server =
-  begin
-    Rack::Handler::Mongrel
-  rescue LoadError => e
-    Rack::Handler::WEBrick
+opts = OptionParser.new("", 24, '  ') { |opts|
+  opts.banner = "Usage: shotgun [ruby options] [rack options] [rackup config]"
+
+  opts.separator ""
+  opts.separator "Ruby options:"
+
+  lineno = 1
+  opts.on("-e", "--eval LINE", "evaluate a LINE of code") { |line|
+    eval line, TOPLEVEL_BINDING, "-e", lineno
+    lineno += 1
+  }
+
+  opts.on("-d", "--debug", "set debugging flags (set $DEBUG to true)") {
+    $DEBUG = true
+  }
+  opts.on("-w", "--warn", "turn warnings on for your script") {
+    $-w = true
+  }
+
+  opts.on("-I", "--include PATH",
+          "specify $LOAD_PATH (may be used more than once)") { |path|
+    $LOAD_PATH.unshift(*path.split(":"))
+  }
+
+  opts.on("-r", "--require LIBRARY",
+          "require the library, before executing your script") { |library|
+    require library
+  }
+
+  opts.separator ""
+  opts.separator "Rack options:"
+  opts.on("-s", "--server SERVER", "server (webrick, mongrel, thin, etc.)") { |s|
+    server = s
+  }
+
+  opts.on("-o", "--host HOST", "listen on HOST (default: 0.0.0.0)") { |host|
+    options[:Host] = host
+  }
+
+  opts.on("-p", "--port PORT", "use PORT (default: 9393)") { |port|
+    options[:Port] = port
+  }
+
+  opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
+    env = e
+  }
+
+  opts.separator ""
+  opts.separator "Common options:"
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
   end
 
-server.run app, options
+  opts.on_tail("--version", "Show version") do
+    require 'rack'
+    puts "Rack #{Rack.version}"
+    exit
+  end
+
+  opts.parse! ARGV
+}
+
+require 'pp'  if $DEBUG
+
+config = ARGV[0] || "config.ru"
+abort "configuration #{config} not found"  unless File.exist? config
+
+if config =~ /\.ru$/ && File.read(config)[/^#\\(.*)/]
+  opts.parse! $1.split(/\s+/)
+end
+
+require 'rack'
+
+unless server = Rack::Handler.get(server)
+  begin
+    server = Rack::Handler::Mongrel
+  rescue LoadError => e
+    server = Rack::Handler::WEBrick
+  end
+end
+
+p server  if $DEBUG
+
+app_wrapper =
+  lambda do |inner_app|
+    case env
+    when "development"
+      Rack::Builder.new {
+        use Rack::CommonLogger, $stderr
+        use Rack::ShowExceptions
+        use Rack::Lint
+        run inner_app
+      }.to_app
+    when "deployment"
+      Rack::Builder.new {
+        use Rack::CommonLogger, $stderr
+        run inner_app
+      }.to_app
+    when "none"
+      inner_app
+    end
+  end
+
+if $DEBUG
+  pp app
+  pp app_wrapper
+end
+
+require 'shotgun'
+app = Shotgun.new(config, app_wrapper)
+server.run app, options do |inst|
+  puts "== Shotgun starting #{server.to_s} on #{options[:Host]}:#{options[:Port]}"
+end

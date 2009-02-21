@@ -18,11 +18,19 @@ class Shotgun
   def call!(env)
     @env = env
     @reader, @writer = IO.pipe
+
+    # Disable GC before forking in an attempt to get some advantage
+    # out of COW.
+    GC.disable
+
     if fork
       proceed_as_parent
     else
       proceed_as_child
     end
+
+  ensure
+    GC.enable
   end
 
   # ==== Stuff that happens in the parent process

@@ -9,10 +9,8 @@ class Shotgun
     @wrapper = wrapper || lambda { |inner_app| inner_app }
   end
 
-  @@mutex = Mutex.new
-
   def call(env)
-    @@mutex.synchronize { dup.call!(env) }
+    dup.call!(env)
   end
 
   def call!(env)

@@ -64,7 +64,12 @@ class Shotgun
       eval "Rack::Builder.new {( #{config}\n )}.to_app", nil, rackup_file
     else
       require rackup_file
-      Object.const_get(File.basename(rackup_file, '.rb').capitalize)
+      if defined? Sinatra::Application
+        Sinatra::Application.set :reload, false
+        Sinatra::Application
+      else
+        Object.const_get(File.basename(rackup_file, '.rb').capitalize)
+      end
     end
   end
 

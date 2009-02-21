@@ -4,7 +4,7 @@ require 'thread'
 class Shotgun
   attr_reader :rackup_file
 
-  def initialize(rackup_file, wrapper)
+  def initialize(rackup_file, wrapper=nil)
     @rackup_file = rackup_file
     @wrapper = wrapper || lambda { |inner_app| inner_app }
   end

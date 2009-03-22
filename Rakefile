@@ -48,7 +48,7 @@ file package('.tar.gz') => %w[pkg/] + $spec.files do |f|
 end
 
 desc 'Publish gem and tarball to rubyforge'
-task 'publish:gem' => [package('.gem'), package('.tar.gz')] do |t|
+task 'release' => [package('.gem'), package('.tar.gz')] do |t|
   sh <<-end
     rubyforge add_release wink #{$spec.name} #{$spec.version} #{package('.gem')} &&
     rubyforge add_file    wink #{$spec.name} #{$spec.version} #{package('.tar.gz')}

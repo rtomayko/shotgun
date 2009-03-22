@@ -64,6 +64,8 @@ class Shotgun
       require rackup_file
       if defined? Sinatra::Application
         Sinatra::Application.set :reload, false
+        Sinatra::Application.set :logging, false
+        Sinatra::Application.set :raise_errors, true
         Sinatra::Application
       else
         Object.const_get(File.basename(rackup_file, '.rb').capitalize)

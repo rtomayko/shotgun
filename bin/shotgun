@@ -95,10 +95,17 @@ end
 
 app_wrapper =
   lambda do |inner_app|
-    if env == 'development'
+    case env
+    when 'development'
       Rack::Builder.new {
+        use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
         use Rack::ShowExceptions
         use Rack::Lint
+        run inner_app
+      }.to_app
+    when 'deployment', 'production'
+      Rack::Builder.new {
+        use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
         run inner_app
       }.to_app
     else

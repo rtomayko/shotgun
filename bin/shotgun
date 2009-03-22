@@ -8,7 +8,7 @@ require 'optparse'
 server = nil
 env = ENV['RACK_ENV'] || 'development'
 browse = false
-options = {:Port => 9393, :Host => "0.0.0.0", :AccessLog => []}
+options = {:Port => 9393, :Host => 'localhost', :AccessLog => []}
 
 opts = OptionParser.new("", 24, '  ') { |opts|
   opts.banner = "Usage: shotgun [ruby options] [rack options] [rackup config]"

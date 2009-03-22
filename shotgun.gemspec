@@ -24,7 +24,8 @@ Gem::Specification.new do |s|
   s.test_files = s.files.select {|path| path =~ /^test\/.*_test.rb/}
 
   s.extra_rdoc_files = %w[README]
-  s.add_dependency 'rack', '>= 0.9.1', '< 1.0'
+  s.add_dependency 'rack',    '>= 0.9.1', '< 1.0'
+  s.add_dependency 'launchy', '>= 0.3.3', '< 1.0'
 
   s.homepage = "http://github.com/rtomayko/shotgun/"
   s.require_paths = %w[lib]

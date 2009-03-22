@@ -5,11 +5,9 @@ $LOAD_PATH.unshift libdir unless $LOAD_PATH.include?(libdir)
 
 require 'optparse'
 
-automatic = false
 server = nil
 env = ENV['RACK_ENV'] || 'development'
-daemonize = false
-pid = nil
+browse = false
 options = {:Port => 9393, :Host => "0.0.0.0", :AccessLog => []}
 
 opts = OptionParser.new("", 24, '  ') { |opts|
@@ -60,14 +58,18 @@ opts = OptionParser.new("", 24, '  ') { |opts|
   }
 
   opts.separator ""
-  opts.separator "Common options:"
+  opts.separator "Shotgun options:"
 
-  opts.on_tail("-h", "--help", "Show this message") do
+  opts.on("-O", "--browse", "open browser immediately after starting") { |browse|
+    browse = true
+  }
+
+  opts.on_tail("-h", "--help", "show this message") do
     puts opts
     exit
   end
 
-  opts.on_tail("--version", "Show version") do
+  opts.on_tail("--version", "show version") do
     require 'rack'
     puts "Rack #{Rack.version}"
     exit
@@ -120,4 +122,9 @@ app = Shotgun.new(config, app_wrapper)
 
 server.run app, options do |inst|
   puts "== Shotgun starting #{server.to_s} on #{options[:Host]}:#{options[:Port]}"
+
+  if browse
+    require 'launchy'
+    Launchy.open("http://#{options[:Host]}:#{options[:Port]}/")
+  end
 end

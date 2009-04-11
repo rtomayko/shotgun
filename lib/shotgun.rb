@@ -49,6 +49,7 @@ class Shotgun
     status, headers, body = app.call(@env)
     Marshal.dump([status, headers.to_hash, slurp(body)], @writer)
     @writer.close
+	ensure
     exit! 0
   end
 

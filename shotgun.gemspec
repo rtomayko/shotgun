@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.name = 'shotgun'
-  s.version = '0.2'
+  s.version = '0.2.1'
   s.date = '2009-03-22'
 
   s.description = "Because reloading sucks."
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.test_files = s.files.select {|path| path =~ /^test\/.*_test.rb/}
 
   s.extra_rdoc_files = %w[README]
-  s.add_dependency 'rack',    '>= 0.9.1', '< 1.0'
+  s.add_dependency 'rack',    '>= 0.9.1'
   s.add_dependency 'launchy', '>= 0.3.3', '< 1.0'
 
   s.homepage = "http://github.com/rtomayko/shotgun/"

@@ -42,6 +42,9 @@
     <p>Shotgun is an automatic reloading version of the rackup command that's shipped with Rack. It can be used as an alternative to the complex reloading logic provided
     by web frameworks or in environments that don't support application reloading.</p>
 
+    <p>Shotgun is primarily useful as a development tool and is not intended
+    for use in production environments.</p>
+
     <p>The shotgun command starts one of Rack's supported servers (e.g., mongrel, thin, webrick) and listens for requests but does not load any part of the actual application. Each time a request is received, it forks, loads the application in the child process, processes the request, and exits the child process. The
     result is clean, application-wide reloading of all source files and templates on each request.</p>
 

@@ -1,7 +1,9 @@
 require 'rack'
+require 'rack/utils'
 require 'thread'
 
 class Shotgun
+  include Rack::Utils
   attr_reader :rackup_file
 
   def initialize(rackup_file, wrapper=nil)
@@ -35,10 +37,20 @@ class Shotgun
 
   def proceed_as_parent
     @writer.close
-    status, headers, body = Marshal.load(@reader)
+    result = Marshal.load(@reader)
     @reader.close
     Process.wait
-    [status, headers, body]
+    if result.length == 3
+      result
+    else
+      [500, {'Content-Type'=>'text/html;charset=utf-8'}, [format_error(result)]]
+    end
+  end
+
+  def format_error(result)
+    message, backtrace = result
+    "<h1>FAIL</h1><h3>#{escape_html(message)}</h3>" +
+    "<pre>#{escape_html(backtrace.join("\n"))}</pre>"
   end
 
   # ==== Stuff that happens in the forked child process.
@@ -49,7 +61,9 @@ class Shotgun
     status, headers, body = app.call(@env)
     Marshal.dump([status, headers.to_hash, slurp(body)], @writer)
     @writer.close
-	ensure
+  rescue Object => boom
+    Marshal.dump(["#{boom.class.name}: #{boom.to_s}", boom.backtrace], @writer)
+  ensure
     exit! 0
   end
 

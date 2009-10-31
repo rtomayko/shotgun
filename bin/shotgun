@@ -130,7 +130,7 @@ require 'shotgun'
 app = Shotgun.new(config, app_wrapper)
 
 server.run app, options do |inst|
-  puts "== Shotgun starting #{server.to_s} on #{options[:Host]}:#{options[:Port]}"
+  puts "== Shotgun starting #{server.to_s} on http://#{options[:Host]}:#{options[:Port]}"
 
   if browse
     require 'launchy'

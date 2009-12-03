@@ -11,7 +11,7 @@ end
 
 env = ENV['RACK_ENV'] || 'development'
 browse = false
-options = {:Port => 9393, :Host => 'localhost', :AccessLog => []}
+options = {:Port => 9393, :Host => 'localhost', :AccessLog => [], :Path => '/'}
 
 opts = OptionParser.new("", 24, '  ') { |opts|
   opts.banner = "Usage: shotgun [ruby options] [rack options] [rackup config]"
@@ -62,6 +62,10 @@ opts = OptionParser.new("", 24, '  ') { |opts|
 
   opts.separator ""
   opts.separator "Shotgun options:"
+
+  opts.on("-u", "--url URL", "specify url path (default: /)") { |url|
+    options[:Path] = url
+  }
 
   opts.on("-O", "--browse", "open browser immediately after starting") { |browse|
     browse = true
@@ -134,6 +138,6 @@ server.run app, options do |inst|
 
   if browse
     require 'launchy'
-    Launchy.open("http://#{options[:Host]}:#{options[:Port]}/")
+    Launchy.open("http://#{options[:Host]}:#{options[:Port]}#{options[:Path]}")
   end
 end

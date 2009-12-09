@@ -36,6 +36,7 @@ class Shotgun
   # ==== Stuff that happens in the parent process
 
   def proceed_as_parent
+    rand # Reseeds 
     @writer.close
     result = Marshal.load(@reader)
     @reader.close

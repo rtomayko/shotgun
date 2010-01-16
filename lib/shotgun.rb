@@ -20,8 +20,7 @@ class Shotgun
     @env = env
     @reader, @writer = IO.pipe
 
-
-    if fork
+    if @child = fork
       proceed_as_parent
     else
       proceed_as_child
@@ -35,7 +34,7 @@ class Shotgun
     @writer.close
     result = Marshal.load(@reader)
     @reader.close
-    Process.wait
+    Process.wait(@child)
     if result.length == 3
       result
     else

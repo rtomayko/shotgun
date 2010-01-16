@@ -3,8 +3,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.name = 'shotgun'
-  s.version = '0.4'
-  s.date = '2009-03-22'
+  s.version = '0.5'
+  s.date = '2010-01-16'
 
   s.description = "Because reloading sucks."
   s.summary     = s.description
@@ -29,6 +29,5 @@ Gem::Specification.new do |s|
 
   s.homepage = "http://github.com/rtomayko/shotgun/"
   s.require_paths = %w[lib]
-  s.rubyforge_project = 'wink'
   s.rubygems_version = '1.1.1'
 end

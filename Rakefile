@@ -9,14 +9,8 @@ Rake::TestTask.new(:test) do |t|
   t.ruby_opts = ['-rubygems'] if defined? Gem
 end
 
-$spec =
-  begin
-    require 'rubygems/specification'
-    data = File.read('shotgun.gemspec')
-    spec = nil
-    Thread.new { spec = eval("$SAFE = 3\n#{data}") }.join
-    spec
-  end
+require 'rubygems'
+$spec = eval(File.read('shotgun.gemspec'))
 
 def package(ext='')
   "pkg/#{$spec.name}-#{$spec.version}" + ext
@@ -45,12 +39,4 @@ file package('.tar.gz') => %w[pkg/] + $spec.files do |f|
       --format=tar \
       HEAD | gzip > #{f.name}
   SH
-end
-
-desc 'Publish gem and tarball to rubyforge'
-task 'release' => [package('.gem'), package('.tar.gz')] do |t|
-  sh <<-end
-    rubyforge add_release wink #{$spec.name} #{$spec.version} #{package('.gem')} &&
-    rubyforge add_file    wink #{$spec.name} #{$spec.version} #{package('.tar.gz')}
-  end
 end

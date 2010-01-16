@@ -9,6 +9,7 @@ class Shotgun
   def initialize(rackup_file, wrapper=nil)
     @rackup_file = rackup_file
     @wrapper = wrapper || lambda { |inner_app| inner_app }
+    enable_copy_on_write
   end
 
   def call(env)
@@ -19,18 +20,12 @@ class Shotgun
     @env = env
     @reader, @writer = IO.pipe
 
-    # Disable GC before forking in an attempt to get some advantage
-    # out of COW.
-    GC.disable
 
     if fork
       proceed_as_parent
     else
       proceed_as_child
     end
-
-  ensure
-    GC.enable
   end
 
   # ==== Stuff that happens in the parent process
@@ -96,5 +91,9 @@ class Shotgun
     buf = []
     body.each { |part| buf << part }
     buf
+  end
+
+  def enable_copy_on_write
+    GC.copy_on_write_friendly = true if GC.respond_to?(:copy_on_write_friendly=)
   end
 end

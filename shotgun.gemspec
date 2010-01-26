@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
 
   s.extra_rdoc_files = %w[README]
   s.add_dependency 'rack',    '>= 0.9.1'
-  s.add_dependency 'launchy', '>= 0.3.3', '< 1.0'
 
   s.homepage = "http://github.com/rtomayko/shotgun/"
   s.require_paths = %w[lib]

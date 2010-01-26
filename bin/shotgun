@@ -130,14 +130,25 @@ app_wrapper =
 
 ENV['RACK_ENV'] = env
 
+# use the BROWSER environment variable or fall back to a more or less standard
+# set of commands
+ENV['BROWSER'] ||=
+  %w[open xdg-open x-www-browser firefox opera mozilla netscape].find do |comm|
+    next if comm == 'open' && `uname` =~ 'Darwin'
+    ENV['PATH'].split(':').any? { |dir| File.executable?("#{dir}/#{comm}") }
+  end
+
 require 'shotgun'
 app = Shotgun.new(config, app_wrapper)
 
+base_url = "http://#{options[:Host]}:#{options[:Port]}"
+puts "== Shotgun starting #{server.to_s} at #{base_url}"
 server.run app, options do |inst|
-  puts "== Shotgun starting #{server.to_s} on http://#{options[:Host]}:#{options[:Port]}"
-
   if browse
-    require 'launchy'
-    Launchy.open("http://#{options[:Host]}:#{options[:Port]}#{options[:Path]}")
+    if ENV['BROWSER']
+      system "#{ENV['BROWSER']} '#{base_url}#{options[:Path]}'"
+    else
+      abort "BROWSER environment variable not set and no browser detected"
+    end
   end
 end

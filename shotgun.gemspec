@@ -3,8 +3,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.name = 'shotgun'
-  s.version = '0.5'
-  s.date = '2010-01-16'
+  s.version = '0.5.1'
+  s.date = '2010-01-25'
 
   s.description = "Because reloading sucks."
   s.summary     = s.description
@@ -19,11 +19,11 @@ Gem::Specification.new do |s|
     shotgun.gemspec
     lib/shotgun.rb
     bin/shotgun
-    test/spec_shotgun.rb
+    test/shotgun_test.rb
     test/test.ru
   ]
   s.executables = ['shotgun']
-  s.test_files = ['test/spec_shotgun.rb']
+  s.test_files = ['test/shotgun_test.rb']
 
   s.extra_rdoc_files = %w[README]
   s.add_dependency 'rack',    '>= 0.9.1'

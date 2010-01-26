@@ -134,7 +134,7 @@ ENV['RACK_ENV'] = env
 # set of commands
 ENV['BROWSER'] ||=
   %w[open xdg-open x-www-browser firefox opera mozilla netscape].find do |comm|
-    next if comm == 'open' && `uname` =~ 'Darwin'
+    next if comm == 'open' && `uname` !~ /Darwin/
     ENV['PATH'].split(':').any? { |dir| File.executable?("#{dir}/#{comm}") }
   end
 

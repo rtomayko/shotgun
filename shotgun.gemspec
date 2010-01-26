@@ -19,9 +19,11 @@ Gem::Specification.new do |s|
     shotgun.gemspec
     lib/shotgun.rb
     bin/shotgun
+    test/spec_shotgun.rb
+    test/test.ru
   ]
   s.executables = ['shotgun']
-  s.test_files = s.files.select {|path| path =~ /^test\/.*_test.rb/}
+  s.test_files = ['test/spec_shotgun.rb']
 
   s.extra_rdoc_files = %w[README]
   s.add_dependency 'rack',    '>= 0.9.1'

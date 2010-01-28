@@ -3,8 +3,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.name = 'shotgun'
-  s.version = '0.5.1'
-  s.date = '2010-01-25'
+  s.version = '0.6'
+  s.date = '2010-01-28'
 
   s.description = "Because reloading sucks."
   s.summary     = s.description

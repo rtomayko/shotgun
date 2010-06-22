@@ -134,8 +134,20 @@ app_wrapper =
   end
 app = Shotgun.new(config, app_wrapper)
 
-base_url = "http://#{options[:Host]}:#{options[:Port]}"
-puts "== Shotgun starting #{server.to_s} at #{base_url}"
+# trap exit signals
+downward = false
+['INT', 'TERM', 'QUIT'].each do |signal|
+  trap(signal) do
+    exit! if downward
+    downward = true
+    server.shutdown if server.respond_to?(:shutdown)
+    Process.wait rescue nil
+    exit!
+  end
+end
+
+base_url = "http://#{options[:Host]}:#{options[:Port]}/"
+puts "== Shotgun/#{server.to_s.sub(/Rack::Handler::/, '')} on #{base_url}"
 server.run app, options do |inst|
   if browse
     if ENV['BROWSER']

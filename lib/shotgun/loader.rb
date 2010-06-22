@@ -11,7 +11,7 @@ module Shotgun
 
     def initialize(rackup_file, &block)
       @rackup_file = rackup_file
-      @config = block || lambda { |inner_app| run inner_app }
+      @config = block || lambda { }
     end
 
     def call(env)
@@ -69,7 +69,7 @@ module Shotgun
 
     def format_error(error, backtrace)
       "<h1>Boot Error</h1>" +
-      "<p>Something went wrong while loading <tt>#{escape_html(rackup_file)}</tt></p>"
+      "<p>Something went wrong while loading <tt>#{escape_html(rackup_file)}</tt></p>" +
       "<h3>#{escape_html(error)}</h3>" +
       "<pre>#{escape_html(backtrace.join("\n"))}</pre>"
     end
@@ -80,8 +80,7 @@ module Shotgun
     def proceed_as_child
       boom = false
       @reader.close
-      app = assemble_app
-      status, headers, body = app.call(@env)
+      status, headers, body = assemble_app.call(@env)
       Marshal.dump([:ok, status, headers.to_hash], @writer)
       spec_body(body).each { |chunk| @writer.write(chunk) }
     rescue Object => boom
@@ -96,7 +95,12 @@ module Shotgun
     end
 
     def assemble_app
-      Rack::Builder.new(&@config).to_app
+      config = @config
+      inner_app = self.inner_app
+      Rack::Builder.new {
+        instance_eval(&config)
+        run inner_app
+      }.to_app
     end
 
     def inner_app

@@ -4,6 +4,7 @@ require 'optparse'
 
 env = ENV['RACK_ENV'] || 'development'
 browse = false
+public_dir = 'public' if File.directory?('public')
 options = {:Port => 9393, :Host => '127.0.0.1', :AccessLog => [], :Path => '/'}
 
 opts = OptionParser.new("", 24, '  ') { |opts|
@@ -56,12 +57,16 @@ opts = OptionParser.new("", 24, '  ') { |opts|
   opts.separator ""
   opts.separator "Shotgun options:"
 
+  opts.on("-O", "--browse", "open browser immediately after starting") { |browse|
+    browse = true
+  }
+
   opts.on("-u", "--url URL", "specify url path (default: /)") { |url|
     options[:Path] = url
   }
 
-  opts.on("-O", "--browse", "open browser immediately after starting") { |browse|
-    browse = true
+  opts.on("-P", "--public PATH", "serve static files under PATH") { |path|
+    public_dir = path
   }
 
   opts.on_tail("-h", "--help", "show this message") do

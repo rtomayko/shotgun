@@ -1,8 +1,9 @@
 require 'rack'
 
 module Shotgun
-  autoload :Loader, 'shotgun/loader'
+  autoload :Loader,      'shotgun/loader'
   autoload :SkipFavicon, 'shotgun/favicon'
+  autoload :Static,      'shotgun/static'
 
   def self.new(rackup_file, &block)
     Loader.new(rackup_file, &block)

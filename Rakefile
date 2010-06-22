@@ -10,8 +10,7 @@ end
 
 desc "build manual"
 task :man do
-  ENV['RONN_MANUAL']       = 'Shotgun Manual'
-  ENV['RONN_ORGANIZATION'] = 'Ryan Tomayko'
+  ENV['RONN_ORGANIZATION'] = "Shotgun #{SPEC.version}"
   sh "ronn -5r -stoc man/*.ronn"
 end
 

@@ -41,7 +41,7 @@ opts = OptionParser.new("", 24, '  ') { |opts|
     server = s
   }
 
-  opts.on("-o", "--host HOST", "listen on HOST (default: localhost)") { |host|
+  opts.on("-o", "--host HOST", "listen on HOST (default: 127.0.0.1)") { |host|
     options[:Host] = host
   }
 
@@ -106,28 +106,28 @@ require 'rack/showexceptions'
 require 'shotgun'
 
 server = Rack::Handler.get(server) || Rack::Handler.default
-app_wrapper =
-  lambda do |inner_app|
-    case env
-    when 'development'
-      Rack::Builder.new {
-        use Shotgun::SkipFavicon
+app =
+  Rack::Builder.new do
+    # these middleware run in the master process.
+    use Shotgun::Static, public_dir if public_dir
+    use Shotgun::SkipFavicon
+
+    # loader forks the child and runs the embedded config followed by the
+    # application config.
+    run Shotgun::Loader.new(config) { |inner_app|
+      case env
+      when 'development'
         use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
         use Rack::ShowExceptions
         use Rack::Lint
-        run inner_app
-      }.to_app
-    when 'deployment', 'production'
-      Rack::Builder.new {
+      when 'deployment', 'production'
         use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
-        run inner_app
-      }.to_app
-    else
-      inner_app
-    end
+      end
+      run inner_app
+    }
   end
+
 Shotgun.enable_copy_on_write
-app = Shotgun::Loader.new(config, app_wrapper)
 
 # trap exit signals
 downward = false

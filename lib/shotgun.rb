@@ -4,8 +4,8 @@ module Shotgun
   autoload :Loader, 'shotgun/loader'
   autoload :SkipFavicon, 'shotgun/favicon'
 
-  def self.new(rackup_file, wrapper=nil)
-    Loader.new(rackup_file, wrapper)
+  def self.new(rackup_file, &block)
+    Loader.new(rackup_file, &block)
   end
 
   def self.enable_copy_on_write

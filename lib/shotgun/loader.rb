@@ -9,9 +9,9 @@ module Shotgun
     include Rack::Utils
     attr_reader :rackup_file
 
-    def initialize(rackup_file, wrapper=nil)
+    def initialize(rackup_file, &block)
       @rackup_file = rackup_file
-      @wrapper = wrapper || lambda { |inner_app| inner_app }
+      @config = block || lambda { |inner_app| run inner_app }
     end
 
     def call(env)
@@ -96,7 +96,7 @@ module Shotgun
     end
 
     def assemble_app
-      @wrapper.call(inner_app)
+      Rack::Builder.new(&@config).to_app
     end
 
     def inner_app

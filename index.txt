@@ -1,0 +1,6 @@
+ruby(1)    http://man.cx/ruby
+
+# other resources
+rack       http://rack.rubyforge.org/doc/README.html
+rack-spec  http://rack.rubyforge.org/doc/SPEC.html
+sinatra    http://www.sinatrarb.com/

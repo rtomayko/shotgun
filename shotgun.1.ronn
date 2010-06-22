@@ -1,0 +1,134 @@
+shotgun(1) -- reloading rack development server
+===============================================
+
+## SYNOPSIS
+
+`shotgun` [<options>] [<rackup-file>]
+
+## DESCRIPTION
+
+**Shotgun** is a simple process-per-request [Rack][] server designed for use in
+development environments. Each time a request is received, `shotgun` forks,
+loads the <rackup-file>, processes a single request and exits.  The result is
+application-wide reloading of all configuration, source files, and templates
+without the need for complex application-level reloading logic.
+
+When no <rackup-file> is given, `shotgun` uses the `config.ru` file in the
+current working directory.
+
+## OPTIONS
+
+Shotgun runs at `http://127.0.0.1:9393` by default. The following options
+control server behavior:
+
+ * `-E`, `--env`=<environment>:
+   Sets the `RACK_ENV` environment variable to <environment> and selects
+   the default set of utility middleware. When <environment> is 'development',
+   shotgun inserts the `Rack::Lint` and `Rack::CommonLogger` middleware
+   components; when <environment> is 'production' or 'deployed',
+   `Rack::CommonLogger` is inserted; otherwise, no utility middleware are
+   inserted.
+
+ * `-P`, `--public`=<path>:
+   Serve requests for static files that exist under <path> from the shotgun
+   master process without forking a worker process. This option is
+   automatically enabled when a `./public` directory is detected, but can be
+   configured explicitly for non-conventional static file directory locations.
+
+   Setting this option appropriately can severely improve overall page load
+   times for applications with many static assets.
+
+ * `-s`, `--server`=<mongrel>|<webrick>|<thin>|<other>:
+   The Rack server handler implementation used to serve requests. Supported
+   values include: `mongrel`, `webrick`, and `thin`. By default, shotgun first
+   tries to use `mongrel` and falls back to `webrick` if mongrel is not
+   available.
+
+ * `-o`, `--host`=<addr>:
+   The hostname or address of the interface the HTTP server should bind to.
+   Default: `127.0.0.1`.
+
+ * `-p`, `--port`=<port>:
+   The port the HTTP server should bind to. Default: `9393`.
+
+ * `-O`, `--browse`:
+   Open browser at http://<host>:<port>/ immediately after the server
+   is started.
+
+Ruby environment related options:
+
+ * `-e`, `--eval` <command>:
+   Evaluate arbitrary <command> within the Ruby interpreter. <command> is
+   evaluated as program arguments are parsed. Multiple `-e` arguments are
+   allowed.
+
+ * `-d`, `--debug`:
+   Turns on debug mode. `$DEBUG` will be set `true`.
+
+ * `-w`, `--warn`:
+   Enable verbose mode without printing version message at the beginning. It
+   sets the `$VERBOSE` variable to true.
+
+ * `-I`, `--include` <path>:
+   Add <path> to the Ruby load path (`$LOAD_PATH`). May be used more than once.
+
+ * `-r`, `--require` <library>:
+   Require <library> before loading the application and starting the server.
+
+Miscellaneous:
+
+ * `-h`, `--help`:
+   Show usage message and exit.
+
+ * `--version`:
+   Show the Rack version and exit.
+
+## INSTALLING
+
+Shotgun is distributed as a gem package at rubygems.org:
+
+<http://rubygems.org/gems/shotgun><br>
+`gem install shotgun`
+
+The `rack` package is required. The `mongrel` package is recommended.
+
+## CONTRIBUTING
+
+Fork and report issues at github.com:
+
+<http://github.com/rtomayko/shotgun/><br>
+`git clone git://github.com/rtomayko/shotgun.git`
+
+## VERSION HISTORY
+
+### Version 0.7 (unreleased)
+
+ * <http://github.com/rtomayko/shotgun/compare/0.6...master>
+
+ * Static files now served from the shotgun master process, making
+   shotgun tolerable for apps with many/unbundled static assets.
+
+ * Added `--public` (`-P`) for specifying a non-standard root / public
+   directory.
+
+ * Response bodies are now streamed over the master &lt; worker pipe
+   instead of being marshalled. Improves performance with large response
+   bodies, and reduces shotgun master process RES usage.
+
+ * GET /favicon.ico requests are served an empty response by the shotgun
+   master process. Prevents the need to fork a worker process.
+
+ * `INT`, `TERM`, `QUIT` now properly trigger server shutdown. The second
+   `INT`, `TERM`, `QUIT` causes the master process to exit hard.
+
+ * Non `.ru` config files (e.g., sinatra app files) may now define command
+   line options in the same way as `.ru` files: by including a
+   `#\ -p 5555 ...` line.
+
+### Versions &lt; 0.7 (2009-2010)
+
+ * <http://github.com/rtomayko/shotgun/commits/0.6>
+
+## SEE ALSO
+
+ruby(1)

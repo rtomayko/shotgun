@@ -1,111 +1,210 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Shotgun</title>
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #ffffff;
-      font-family: "helvetica";
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #000000; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #000000; }
-    h3 { text-align: center; color: #000000; }
-    a { color: #000000; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    pre.license { background:#fff; color:#444 ; padding: 0}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.6.42 (http://github.com/rtomayko/ronn/tree/0.6.6-36-gb67d494)'>
+  <title>shotgun(1) - reloading rack development server</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+  <style type='text/css' media='all'>
+  /* style: toc */
+  .man-navigation {display:block !important;position:fixed;top:0;left:113ex;height:100%;width:100%;padding:48px 0 0 0;border-left:1px solid #dbdbdb;background:#eee}
+  .man-navigation a,.man-navigation a:hover,.man-navigation a:link,.man-navigation a:visited {display:block;margin:0;padding:5px 2px 5px 30px;color:#999;text-decoration:none}
+  .man-navigation a:hover {color:#111;text-decoration:underline}
   </style>
 </head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
 
-<body>
-  <a href="http://github.com/rtomayko/shotgun"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-  <div id="container">
-    <h1><a href="http://github.com/rtomayko/shotgun">shotgun</a>
-      <span class="small">by <a href="http://github.com/rtomayko">rtomayko</a></small></h1>
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
 
-    <div class="description">
-      Forking implementation of rackup &mdash; because reloading always sucks.
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#SYNOPSIS">SYNOPSIS</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#OPTIONS">OPTIONS</a>
+    <a href="#INSTALLING">INSTALLING</a>
+    <a href="#CONTRIBUTING">CONTRIBUTING</a>
+    <a href="#VERSION-HISTORY">VERSION HISTORY</a>
+    <a href="#SEE-ALSO">SEE ALSO</a>
     </div>
 
-    <p>Shotgun is an automatic reloading version of the rackup command that's shipped with Rack. It can be used as an alternative to the complex reloading logic provided
-    by web frameworks or in environments that don't support application reloading.</p>
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>shotgun(1)</li>
+    <li class='tc'></li>
+    <li class='tr'>shotgun(1)</li>
+  </ol>
 
-    <p>Shotgun is primarily useful as a development tool and is not intended
-    for use in production environments.</p>
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>shotgun</code> - <span class="man-whatis">reloading rack development server</span>
+</p>
 
-    <p>The shotgun command starts one of Rack's supported servers (e.g., mongrel, thin, webrick) and listens for requests but does not load any part of the actual application. Each time a request is received, it forks, loads the application in the child process, processes the request, and exits the child process. The
-    result is clean, application-wide reloading of all source files and templates on each request.</p>
+<h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-    <h2>Dependencies</h2>
-    <p>rack, fork(2)</p>
+<p><code>shotgun</code> [<var>options</var>] [<var>rackup-file</var>]</p>
 
-    <h2>Install</h2>
-    <p><pre>gem install shotgun</pre></p>
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
 
-    <h2>Usage</h2>
-    <p>Starting a server with a rackup file:</p>
+<p><strong>Shotgun</strong> is a simple process-per-request <a href="http://rack.rubyforge.org/doc/README.html">Rack</a> server designed for use in
+development environments. Each time a request is received, <code>shotgun</code> forks,
+loads the <var>rackup-file</var>, processes a single request and exits.  The result is
+application-wide reloading of all configuration, source files, and templates
+without the need for complex application-level reloading logic.</p>
 
-    <p><pre>shotgun config.ru</pre></p>
+<p>When no <var>rackup-file</var> is given, <code>shotgun</code> uses the <code>config.ru</code> file in the
+current working directory.</p>
 
-    <p>Using Thin and starting on port 6000 instead of 9393 (default):</p>
+<h2 id="OPTIONS">OPTIONS</h2>
 
-    <p><pre>shotgun --server=thin --port=6000 config.ru</pre></p>
+<p>Shotgun runs at <code>http://127.0.0.1:9393</code> by default. The following options
+control server behavior:</p>
 
-    <p>Running Sinatra apps:</p>
+<dl>
+<dt><code>-E</code>, <code>--env</code>=<var>environment</var></dt><dd><p>Sets the <code>RACK_ENV</code> environment variable to <var>environment</var> and selects
+the default set of utility middleware. When <var>environment</var> is 'development',
+shotgun inserts the <code>Rack::Lint</code> and <code>Rack::CommonLogger</code> middleware
+components; when <var>environment</var> is 'production' or 'deployed',
+<code>Rack::CommonLogger</code> is inserted; otherwise, no utility middleware are
+inserted.</p></dd>
+<dt><code>-P</code>, <code>--public</code>=<var>path</var></dt><dd><p>Serve requests for static files that exist under <var>path</var> from the shotgun
+master process without forking a worker process. This option is
+automatically enabled when a <code>./public</code> directory is detected, but can be
+configured explicitly for non-conventional static file directory locations.</p>
 
-    <p><pre>shotgun hello.rb</pre></p>
+<p>Setting this option appropriately can severely improve overall page load
+times for applications with many static assets.</p></dd>
+<dt><code>-s</code>, <code>--server</code>=<var>mongrel</var>|<var>webrick</var>|<var>thin</var>|<var>other</var></dt><dd><p>The Rack server handler implementation used to serve requests. Supported
+values include: <code>mongrel</code>, <code>webrick</code>, and <code>thin</code>. By default, shotgun first
+tries to use <code>mongrel</code> and falls back to <code>webrick</code> if mongrel is not
+available.</p></dd>
+<dt><code>-o</code>, <code>--host</code>=<var>addr</var></dt><dd><p>The hostname or address of the interface the HTTP server should bind to.
+Default: <code>127.0.0.1</code>.</p></dd>
+<dt><code>-p</code>, <code>--port</code>=<var>port</var></dt><dd><p>The port the HTTP server should bind to. Default: <code>9393</code>.</p></dd>
+<dt><code>-O</code>, <code>--browse</code></dt><dd><p>Open browser at http://<var>host</var>:<var>port</var>/ immediately after the server
+is started.</p></dd>
+</dl>
 
-    <p>See 'shotgun --help' for more advanced usage.</p>
 
-    <h2>Authors</h2>
-    <p><a href='http://tomayko.com/about'>Ryan Tomayko</a></p>
+<p>Ruby environment related options:</p>
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/rtomayko/shotgun/zipball/master">zip</a> or
-      <a href="http://github.com/rtomayko/shotgun/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/rtomayko/shotgun</pre>
-    </p>
+<dl>
+<dt><code>-e</code>, <code>--eval</code> <var>command</var></dt><dd><p>Evaluate arbitrary <var>command</var> within the Ruby interpreter. <var>command</var> is
+evaluated as program arguments are parsed. Multiple <code>-e</code> arguments are
+allowed.</p></dd>
+<dt><code>-d</code>, <code>--debug</code></dt><dd><p>Turns on debug mode. <code>$DEBUG</code> will be set <code>true</code>.</p></dd>
+<dt><code>-w</code>, <code>--warn</code></dt><dd><p>Enable verbose mode without printing version message at the beginning. It
+sets the <code>$VERBOSE</code> variable to true.</p></dd>
+<dt><code>-I</code>, <code>--include</code> <var>path</var></dt><dd><p>Add <var>path</var> to the Ruby load path (<code>$LOAD_PATH</code>). May be used more than once.</p></dd>
+<dt><code>-r</code>, <code>--require</code> <var>library</var></dt><dd><p>Require <var>library</var> before loading the application and starting the server.</p></dd>
+</dl>
 
-    <h2>License</h2>
-    <p><pre class='license'>Copyright (c) 2009 Ryan Tomayko &lt;<a href='http://tomayko.com/about'>tomayko.com/about</a>&gt;
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+<p>Miscellaneous:</p>
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+<dl>
+<dt><code>-h</code>, <code>--help</code></dt><dd><p>Show usage message and exit.</p></dd>
+<dt><code>--version</code></dt><dd><p>Show the Rack version and exit.</p></dd>
+</dl>
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</pre></p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/rtomayko/shotgun">rtomayko/shotgun</a>
-    </div>
+<h2 id="INSTALLING">INSTALLING</h2>
+
+<p>Shotgun is distributed as a gem package at rubygems.org:</p>
+
+<p><a href="http://rubygems.org/gems/shotgun" data-bare-link="true">http://rubygems.org/gems/shotgun</a><br />
+<code>gem install shotgun</code></p>
+
+<p>The <code>rack</code> package is required. The <code>mongrel</code> package is recommended.</p>
+
+<h2 id="CONTRIBUTING">CONTRIBUTING</h2>
+
+<p>Fork and report issues at github.com:</p>
+
+<p><a href="http://github.com/rtomayko/shotgun/" data-bare-link="true">http://github.com/rtomayko/shotgun/</a><br />
+<code>git clone git://github.com/rtomayko/shotgun.git</code></p>
+
+<h2 id="VERSION-HISTORY">VERSION HISTORY</h2>
+
+<h3 id="Version-0-7-unreleased-">Version 0.7 (unreleased)</h3>
+
+<ul>
+<li><p><a href="http://github.com/rtomayko/shotgun/compare/0.6...master" data-bare-link="true">http://github.com/rtomayko/shotgun/compare/0.6...master</a></p></li>
+<li><p>Static files now served from the shotgun master process, making
+shotgun tolerable for apps with many/unbundled static assets.</p></li>
+<li><p>Added <code>--public</code> (<code>-P</code>) for specifying a non-standard root / public
+directory.</p></li>
+<li><p>Response bodies are now streamed over the master &lt; worker pipe
+instead of being marshalled. Improves performance with large response
+bodies, and reduces shotgun master process RES usage.</p></li>
+<li><p>GET /favicon.ico requests are served an empty response by the shotgun
+master process. Prevents the need to fork a worker process.</p></li>
+<li><p><code>INT</code>, <code>TERM</code>, <code>QUIT</code> now properly trigger server shutdown. The second
+<code>INT</code>, <code>TERM</code>, <code>QUIT</code> causes the master process to exit hard.</p></li>
+<li><p>Non <code>.ru</code> config files (e.g., sinatra app files) may now define command
+line options in the same way as <code>.ru</code> files: by including a
+<code>#\ -p 5555 ...</code> line.</p></li>
+</ul>
+
+
+<h3 id="Versions-0-7-2009-2010-">Versions &lt; 0.7 (2009-2010)</h3>
+
+<ul>
+<li><a href="http://github.com/rtomayko/shotgun/commits/0.6" data-bare-link="true">http://github.com/rtomayko/shotgun/commits/0.6</a></li>
+</ul>
+
+
+<h2 id="SEE-ALSO">SEE ALSO</h2>
+
+<p><a href="http://man.cx/ruby" class="man-ref">ruby<span class="s">(1)</span></a></p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'>Shotgun 0.7</li>
+    <li class='tc'>June 2010</li>
+    <li class='tr'>shotgun(1)</li>
+  </ol>
+
   </div>
 </body>
 </html>

@@ -103,7 +103,7 @@ require 'rack/showexceptions'
 unless server = Rack::Handler.get(server)
   begin
     server = Rack::Handler::Mongrel
-  rescue LoadError => e
+  rescue LoadError
     server = Rack::Handler::WEBrick
   end
 end

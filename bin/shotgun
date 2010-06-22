@@ -86,9 +86,10 @@ opts = OptionParser.new("", 24, '  ') { |opts|
 }
 
 config = ARGV[0] || "config.ru"
-abort "configuration #{config} not found"  unless File.exist? config
+abort "configuration #{config} not found" unless File.exist? config
 
-if config =~ /\.ru$/ && File.read(config)[/^#\\(.*)/]
+# extract additional arguments from first #\ line in config file.
+if File.read(config)[/^#\\(.*)/]
   opts.parse! $1.split(/\s+/)
 end
 

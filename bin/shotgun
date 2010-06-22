@@ -92,6 +92,15 @@ if config =~ /\.ru$/ && File.read(config)[/^#\\(.*)/]
   opts.parse! $1.split(/\s+/)
 end
 
+# use the BROWSER environment variable or fall back to a more or less standard
+# set of commands
+ENV['BROWSER'] ||=
+  %w[open xdg-open x-www-browser firefox opera mozilla netscape].find do |comm|
+    next if comm == 'open' && `uname` !~ /Darwin/
+    ENV['PATH'].split(':').any? { |dir| File.executable?("#{dir}/#{comm}") }
+  end
+ENV['RACK_ENV'] = env
+
 require 'rack'
 require 'rack/utils'
 require 'rack/request'
@@ -128,15 +137,6 @@ app_wrapper =
     end
   end
 
-ENV['RACK_ENV'] = env
-
-# use the BROWSER environment variable or fall back to a more or less standard
-# set of commands
-ENV['BROWSER'] ||=
-  %w[open xdg-open x-www-browser firefox opera mozilla netscape].find do |comm|
-    next if comm == 'open' && `uname` !~ /Darwin/
-    ENV['PATH'].split(':').any? { |dir| File.executable?("#{dir}/#{comm}") }
-  end
 
 require 'shotgun'
 app = Shotgun.new(config, app_wrapper)

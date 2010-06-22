@@ -3,20 +3,33 @@ require 'rack/mock'
 require 'shotgun'
 
 class ShotgunTest < Test::Unit::TestCase
-  def setup
-    @rackup_file = "#{File.dirname(__FILE__)}/test.ru"
-    @shotgun = Shotgun.new(@rackup_file)
+  def rackup_file(name)
+    "#{File.dirname(__FILE__)}/#{name}"
   end
 
   def test_knows_the_rackup_file
-    assert_equal @rackup_file, @shotgun.rackup_file
+    file = rackup_file('test.ru')
+    shotgun = Shotgun.new(file)
+    assert_equal file, shotgun.rackup_file
   end
 
   def test_processes_requests
-    request = Rack::MockRequest.new(@shotgun)
+    file = rackup_file('test.ru')
+    shotgun = Shotgun.new(file)
+    request = Rack::MockRequest.new(shotgun)
     res = request.get("/")
     assert_equal 200, res.status
     assert_equal "BANG!", res.body
     assert_equal "text/plain", res.headers['Content-Type']
+  end
+
+  def test_processes_large_requests
+    file = rackup_file('big.ru')
+    shotgun = Shotgun.new(file)
+    request = Rack::MockRequest.new(shotgun)
+    res = request.get("/")
+    assert_equal 200, res.status
+    assert res.body =~ %r|<pre>(?:.{1023}\n){1024}</pre>|,
+      "body of size #{res.body.size} does not match expected output"
   end
 end

@@ -27,38 +27,64 @@ class Shotgun
     end
   end
 
-  # ==== Stuff that happens in the parent process
+  ##
+  # Stuff that happens in the parent process
 
   def proceed_as_parent
-    rand # Reseeds 
     @writer.close
-    result = Marshal.load(@reader)
-    @reader.close
-    Process.wait(@child)
-    if result.length == 3
-      result
+    rand
+    result, status, headers = Marshal.load(@reader)
+    body = Body.new(@child, @reader)
+    case result
+    when :ok
+      [status, headers, body]
+    when :error
+      error, backtrace = status, headers
+      body.close
+      [
+        500,
+        {'Content-Type'=>'text/html;charset=utf-8'},
+        [format_error(error, message)]
+      ]
     else
-      [500, {'Content-Type'=>'text/html;charset=utf-8'}, [format_error(result)]]
+      fail "unexpected response: #{result.inspect}"
     end
   end
 
-  def format_error(result)
-    message, backtrace = result
-    "<h1>FAIL</h1><h3>#{escape_html(message)}</h3>" +
+  class Body < Struct.new(:pid, :fd)
+    def each
+      while chunk = fd.read(1024)
+        yield chunk
+      end
+    end
+
+    def close
+      fd.close
+    ensure
+      Process.wait(pid)
+    end
+  end
+
+  def format_error(error, backtrace)
+    "<h1>Boot Error</h1>" +
+    "<p>Something went wrong while loading <tt>#{escape_html(rackup_file)}</tt></p>"
+    "<h3>#{escape_html(error)}</h3>" +
     "<pre>#{escape_html(backtrace.join("\n"))}</pre>"
   end
 
-  # ==== Stuff that happens in the forked child process.
+  ##
+  # Stuff that happens in the child process
 
   def proceed_as_child
     @reader.close
     app = assemble_app
     status, headers, body = app.call(@env)
-    Marshal.dump([status, headers.to_hash, slurp(body)], @writer)
-    @writer.close
+    Marshal.dump([:ok, status, headers.to_hash], @writer)
+    spec_body(body).each { |chunk| @writer.write(chunk) }
   rescue Object => boom
     Marshal.dump(["#{boom.class.name}: #{boom.to_s}", boom.backtrace], @writer)
   ensure
+    @writer.close
     exit! 0
   end
 
@@ -83,13 +109,14 @@ class Shotgun
     end
   end
 
-  def slurp(body)
-    return body    if body.respond_to? :to_ary
-    return [body]  if body.respond_to? :to_str
-
-    buf = []
-    body.each { |part| buf << part }
-    buf
+  def spec_body(body)
+    if body.respond_to? :to_str
+      [body]
+    elsif body.respond_to?(:each)
+      body
+    else
+      fail "body must respond to #each"
+    end
   end
 
   def enable_copy_on_write

@@ -76,16 +76,21 @@ class Shotgun
   # Stuff that happens in the child process
 
   def proceed_as_child
+    boom = false
     @reader.close
     app = assemble_app
     status, headers, body = app.call(@env)
     Marshal.dump([:ok, status, headers.to_hash], @writer)
     spec_body(body).each { |chunk| @writer.write(chunk) }
   rescue Object => boom
-    Marshal.dump(["#{boom.class.name}: #{boom.to_s}", boom.backtrace], @writer)
+    Marshal.dump([
+      :error,
+      "#{boom.class.name}: #{boom.to_s}",
+      boom.backtrace
+    ], @writer)
   ensure
     @writer.close
-    exit! 0
+    exit! boom ? 1 : 0
   end
 
   def assemble_app

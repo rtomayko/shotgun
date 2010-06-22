@@ -1,0 +1,138 @@
+.\" generated with Ronn/v0.6.42
+.\" http://github.com/rtomayko/ronn/tree/0.6.6-36-gb67d494
+.
+.TH "SHOTGUN" "1" "June 2010" "Ryan Tomayko" "Shotgun Manual"
+.
+.SH "NAME"
+\fBshotgun\fR \- reloading rack development server
+.
+.SH "SYNOPSIS"
+\fBshotgun\fR [\fIoptions\fR] [\fIrackup\-file\fR]
+.
+.SH "DESCRIPTION"
+\fBShotgun\fR is a simple process\-per\-request Rack \fIhttp://rack\.rubyforge\.org/doc/README\.html\fR server designed for use in development environments\. Each time a request is received, \fBshotgun\fR forks, loads the \fIrackup\-file\fR, processes a single request and exits\. The result is application\-wide reloading of all configuration, source files, and templates without the need for complex application\-level reloading logic\.
+.
+.P
+When no \fIrackup\-file\fR is given, \fBshotgun\fR uses the \fBconfig\.ru\fR file in the current working directory\.
+.
+.SH "OPTIONS"
+Shotgun runs at \fBhttp://127\.0\.0\.1:9393\fR by default\. The following options control server behavior:
+.
+.TP
+\fB\-E\fR, \fB\-\-env\fR=\fIenvironment\fR
+Sets the \fBRACK_ENV\fR environment variable to \fIenvironment\fR and selects the default set of utility middleware\. When \fIenvironment\fR is \'development\', shotgun inserts the \fBRack::Lint\fR and \fBRack::CommonLogger\fR middleware components; when \fIenvironment\fR is \'production\' or \'deployed\', \fBRack::CommonLogger\fR is inserted; otherwise, no utility middleware are inserted\.
+.
+.TP
+\fB\-P\fR, \fB\-\-public\fR=\fIpath\fR
+Serve requests for static files that exist under \fIpath\fR from the shotgun master process without forking a worker process\. This option is automatically enabled when a \fB\./public\fR directory is detected, but can be configured explicitly for non\-conventional static file directory locations\.
+.
+.IP
+Setting this option appropriately can severely improve overall page load times for applications with many static assets\.
+.
+.TP
+\fB\-s\fR, \fB\-\-server\fR=\fImongrel\fR|\fIwebrick\fR|\fIthin\fR|\fIother\fR
+The Rack server handler implementation used to serve requests\. Supported values include: \fBmongrel\fR, \fBwebrick\fR, and \fBthin\fR\. By default, shotgun first tries to use \fBmongrel\fR and falls back to \fBwebrick\fR if mongrel is not available\.
+.
+.TP
+\fB\-o\fR, \fB\-\-host\fR=\fIaddr\fR
+The hostname or address of the interface the HTTP server should bind to\. Default: \fB127\.0\.0\.1\fR\.
+.
+.TP
+\fB\-p\fR, \fB\-\-port\fR=\fIport\fR
+The port the HTTP server should bind to\. Default: \fB9393\fR\.
+.
+.TP
+\fB\-O\fR, \fB\-\-browse\fR
+Open browser at http://\fIhost\fR:\fIport\fR/ immediately after the server is started\.
+.
+.P
+Ruby environment related options:
+.
+.TP
+\fB\-e\fR, \fB\-\-eval\fR \fIcommand\fR
+Evaluate arbitrary \fIcommand\fR within the Ruby interpreter\. \fIcommand\fR is evaluated as program arguments are parsed\. Multiple \fB\-e\fR arguments are allowed\.
+.
+.TP
+\fB\-d\fR, \fB\-\-debug\fR
+Turns on debug mode\. \fB$DEBUG\fR will be set \fBtrue\fR\.
+.
+.TP
+\fB\-w\fR, \fB\-\-warn\fR
+Enable verbose mode without printing version message at the beginning\. It sets the \fB$VERBOSE\fR variable to true\.
+.
+.TP
+\fB\-I\fR, \fB\-\-include\fR \fIpath\fR
+Add \fIpath\fR to the Ruby load path (\fB$LOAD_PATH\fR)\. May be used more than once\.
+.
+.TP
+\fB\-r\fR, \fB\-\-require\fR \fIlibrary\fR
+Require \fIlibrary\fR before loading the application and starting the server\.
+.
+.P
+Miscellaneous:
+.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show usage message and exit\.
+.
+.TP
+\fB\-\-version\fR
+Show the Rack version and exit\.
+.
+.SH "INSTALLING"
+Shotgun is distributed as a gem package at rubygems\.org:
+.
+.P
+\fIhttp://rubygems\.org/gems/shotgun\fR
+.
+.br
+\fBgem install shotgun\fR
+.
+.P
+The \fBrack\fR package is required\. The \fBmongrel\fR package is recommended\.
+.
+.SH "CONTRIBUTING"
+Fork and report issues at github\.com:
+.
+.P
+\fIhttp://github\.com/rtomayko/shotgun/\fR
+.
+.br
+\fBgit clone git://github\.com/rtomayko/shotgun\.git\fR
+.
+.SH "VERSION HISTORY"
+.
+.SS "Version 0\.7 (unreleased)"
+.
+.IP "\(bu" 4
+\fIhttp://github\.com/rtomayko/shotgun/compare/0\.6\.\.\.master\fR
+.
+.IP "\(bu" 4
+Static files now served from the shotgun master process, making shotgun tolerable for apps with many/unbundled static assets\.
+.
+.IP "\(bu" 4
+Added \fB\-\-public\fR (\fB\-P\fR) for specifying a non\-standard root / public directory\.
+.
+.IP "\(bu" 4
+Response bodies are now streamed over the master < worker pipe instead of being marshalled\. Improves performance with large response bodies, and reduces shotgun master process RES usage\.
+.
+.IP "\(bu" 4
+GET /favicon\.ico requests are served an empty response by the shotgun master process\. Prevents the need to fork a worker process\.
+.
+.IP "\(bu" 4
+\fBINT\fR, \fBTERM\fR, \fBQUIT\fR now properly trigger server shutdown\. The second \fBINT\fR, \fBTERM\fR, \fBQUIT\fR causes the master process to exit hard\.
+.
+.IP "\(bu" 4
+Non \fB\.ru\fR config files (e\.g\., sinatra app files) may now define command line options in the same way as \fB\.ru\fR files: by including a \fB#\e \-p 5555 \.\.\.\fR line\.
+.
+.IP "" 0
+.
+.SS "Versions < 0\.7 (2009\-2010)"
+.
+.IP "\(bu" 4
+\fIhttp://github\.com/rtomayko/shotgun/commits/0\.6\fR
+.
+.IP "" 0
+.
+.SH "SEE ALSO"
+ruby(1)

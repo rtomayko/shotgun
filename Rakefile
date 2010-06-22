@@ -8,6 +8,13 @@ Rake::TestTask.new(:test) do |t|
   t.ruby_opts = ['-rubygems'] if defined? Gem
 end
 
+desc "build manual"
+task :man do
+  ENV['RONN_MANUAL']       = 'Shotgun Manual'
+  ENV['RONN_ORGANIZATION'] = 'Ryan Tomayko'
+  sh "ronn -5r -stoc man/*.ronn"
+end
+
 require 'rubygems'
 SPEC = eval(File.read('shotgun.gemspec'))
 PACK = "#{SPEC.name}-#{SPEC.version}"

@@ -1,0 +1,88 @@
+shotgun(1) -- rack server with code reloading
+=============================================
+
+## SYNOPSIS
+
+`shotgun` [<options>] <rackup-file>
+
+## DESCRIPTION
+
+**Shotgun** runs [Rack][] applications with support for per-request source file
+reloading. It starts a server (mongrel, thin, webrick, etc.) listening for
+requests but does not load any part of the application code. Each time a request
+is received, shotgun forks, loads the application in the child process,
+processes the request, delivers the response, and exits the child process. This
+results in simple, application-wide reloading of all source files and templates
+on each request without complex application-level reloading logic.
+
+Shotgun is a development tool and should not be used in multi-user / production
+environments. The `rackup` command shipped as part of the rack package provides
+very similar features without process-per-request reloading.
+
+## OPTIONS
+
+The only required argument is the <rackup-file>, which may be the path to a
+`config.ru` file or a single-file [Sinatra][] app.
+
+Options that control aspects of the HTTP server:
+
+  * `-s`, `--server` <server>:
+    The HTTP server implementation. <server> may be any of the following values:
+    _mongrel_, _webrick_, _thin_. With no `--server` option, `shotgun` tries to
+    use `mongrel` and falls back to `webrick` if mongrel cannot be loaded.
+
+  * `-o`, `--host` <host>:
+    The hostname or address of the interface the HTTP server should listen on.
+    With no `--host` option, `localhost` is assumed.
+
+  * `-p`, `--port` <port>:
+    The port the HTTP server should listen on. The server runs on port `9393`
+    by default.
+
+  * `-u`, `--url` <path>:
+    Root URL path where the application should be "mounted". All requests must
+    be prefixed with this value in order to be properly routed to the application.
+
+  * `-E`, `--env` <environment>:
+    Use <environment> to establish the default set of middleware. <environment>
+    may be `development`, `deployed`, or `none`. When <environment> is
+    `development`, the `Rack::Lint` and `Rack::CommonLogger` middleware are
+    included by default; when <environment> is `deployed`, the
+    `Rack::CommonLogger` middleware is included; otherwise, no middleware are
+    included by default.
+
+  * `-O`, `--browse`:
+    Open browser to http://<host>:<port>/<path> immediately after the server
+    is started.
+
+Options that effect the underlying Ruby interpreter:
+
+  * `-e`, `--eval` <command>:
+    Evaluate arbitrary <command> within the Ruby interpreter. <command> is
+    evaluated as program arguments are parsed. Multiple `-e` arguments are
+    allowed.
+
+  * `-d`, `--debug`:
+    Turns on debug mode. `$DEBUG` will be set `true`.
+
+  * `-w`, `--warn`:
+    Enable verbose mode without printing version message at the beginning. It
+    sets the `$VERBOSE` variable to true.
+
+  * `-I`, `--include` <path>:
+    Add <path> to the Ruby load path (`$LOAD_PATH`). May be used more than once.
+
+  * `-r`, `--require` <library>:
+    Require <library> before loading the application and starting the server.
+
+Miscellaneous options:
+
+  * `-h`, `--help`:
+    Show usage message and exit.
+
+  * `--version`:
+    Show the Rack version and exit.
+
+## SEE ALSO
+
+ruby(1)

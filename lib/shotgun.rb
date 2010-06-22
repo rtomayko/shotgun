@@ -44,7 +44,7 @@ class Shotgun
       [
         500,
         {'Content-Type'=>'text/html;charset=utf-8'},
-        [format_error(error, message)]
+        [format_error(error, backtrace)]
       ]
     else
       fail "unexpected response: #{result.inspect}"
@@ -126,5 +126,18 @@ class Shotgun
 
   def enable_copy_on_write
     GC.copy_on_write_friendly = true if GC.respond_to?(:copy_on_write_friendly=)
+  end
+
+  class SkipFavicon < Struct.new(:app)
+    def call(env)
+      if env['PATH_INFO'] == '/favicon.ico'
+        [404, {
+          'Content-Type'  => 'image/png',
+          'Cache-Control' => 'public, max-age=100000000000'
+        }, []]
+      else
+        app.call(env)
+      end
+    end
   end
 end

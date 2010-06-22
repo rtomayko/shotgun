@@ -109,6 +109,7 @@ require 'rack/lint'
 require 'rack/commonlogger'
 require 'rack/showexceptions'
 
+require 'shotgun'
 
 server = Rack::Handler.get(server) || Rack::Handler.default
 app_wrapper =
@@ -116,6 +117,7 @@ app_wrapper =
     case env
     when 'development'
       Rack::Builder.new {
+        use Shotgun::SkipFavicon
         use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
         use Rack::ShowExceptions
         use Rack::Lint
@@ -130,9 +132,6 @@ app_wrapper =
       inner_app
     end
   end
-
-
-require 'shotgun'
 app = Shotgun.new(config, app_wrapper)
 
 base_url = "http://#{options[:Host]}:#{options[:Port]}"

@@ -109,14 +109,8 @@ require 'rack/lint'
 require 'rack/commonlogger'
 require 'rack/showexceptions'
 
-unless server = Rack::Handler.get(server)
-  begin
-    server = Rack::Handler::Mongrel
-  rescue LoadError
-    server = Rack::Handler::WEBrick
-  end
-end
 
+server = Rack::Handler.get(server) || Rack::Handler.default
 app_wrapper =
   lambda do |inner_app|
     case env

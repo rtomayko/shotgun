@@ -133,7 +133,8 @@ app_wrapper =
       inner_app
     end
   end
-app = Shotgun.new(config, app_wrapper)
+Shotgun.enable_copy_on_write
+app = Shotgun::Loader.new(config, app_wrapper)
 
 # trap exit signals
 downward = false

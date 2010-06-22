@@ -147,12 +147,12 @@ downward = false
   end
 end
 
-base_url = "http://#{options[:Host]}:#{options[:Port]}/"
+base_url = "http://#{options[:Host]}:#{options[:Port]}#{options[:Path]}"
 puts "== Shotgun/#{server.to_s.sub(/Rack::Handler::/, '')} on #{base_url}"
 server.run app, options do |inst|
   if browse
     if ENV['BROWSER']
-      system "#{ENV['BROWSER']} '#{base_url}#{options[:Path]}'"
+      system "#{ENV['BROWSER']} '#{base_url}'"
     else
       abort "BROWSER environment variable not set and no browser detected"
     end

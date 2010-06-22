@@ -2,13 +2,6 @@
 
 require 'optparse'
 
-begin
-  require 'thin'
-  server = 'thin'
-rescue LoadError
-  server = nil
-end
-
 env = ENV['RACK_ENV'] || 'development'
 browse = false
 options = {:Port => 9393, :Host => '127.0.0.1', :AccessLog => [], :Path => '/'}

@@ -148,9 +148,17 @@ Fork and report issues at github.com:
 
 ## VERSION HISTORY
 
-### Version 0.7 (unreleased)
+### Version 0.8 (unreleased)
 
- * <http://github.com/rtomayko/shotgun/compare/0.6...master>
+ * <http://github.com/rtomayko/shotgun/compare/0.7...master>
+
+ * Preloading support. The `shotgun.rb` or `config/shotgun.rb` file is
+   loaded at startup and may require libraries and register callbacks
+   for fork events.
+
+### Version 0.7 (2010 June 22)
+
+ * <http://github.com/rtomayko/shotgun/compare/0.6...0.7>
 
  * Static files now served from the shotgun master process, making
    shotgun tolerable for apps with many/unbundled static assets.

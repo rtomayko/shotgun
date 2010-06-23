@@ -6,7 +6,7 @@ class SlowResponse
   def each
     yield "<pre>"
     10.times do
-      yield('.' * 10) + "\n")
+      yield(('.' * 10) + "\n")
       sleep 0.5
     end
     yield "</pre>"

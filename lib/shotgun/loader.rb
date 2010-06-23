@@ -22,9 +22,12 @@ module Shotgun
       @env = env
       @reader, @writer = IO.pipe
 
+      Shotgun.before_fork!
+
       if @child = fork
         proceed_as_parent
       else
+        Shotgun.after_fork!
         proceed_as_child
       end
     end

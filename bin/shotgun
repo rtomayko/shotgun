@@ -145,6 +145,9 @@ downward = false
   end
 end
 
+# load shotgun.rb in current working directory if it exists
+Shotgun.preload
+
 base_url = "http://#{options[:Host]}:#{options[:Port]}#{options[:Path]}"
 puts "== Shotgun/#{server.to_s.sub(/Rack::Handler::/, '')} on #{base_url}"
 server.run app, options do |inst|

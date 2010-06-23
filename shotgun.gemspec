@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
     lib/shotgun/loader.rb
     lib/shotgun/static.rb
     man/index.txt
+    man/shotgun.1
     man/shotgun.1.ronn
     shotgun.gemspec
     test/big.ru

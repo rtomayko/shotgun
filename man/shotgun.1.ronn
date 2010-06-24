@@ -148,13 +148,17 @@ Fork and report issues at github.com:
 
 ## VERSION HISTORY
 
-### Version 0.8 (unreleased)
+### Version 0.8 (2010 June 24)
 
- * <http://github.com/rtomayko/shotgun/compare/0.7...master>
+ * <http://github.com/rtomayko/shotgun/compare/0.7...0.8>
 
  * Preloading support. The `shotgun.rb` or `config/shotgun.rb` file is
    loaded at startup and may require libraries and register callbacks
-   for fork events.
+   for fork events. See the section on [PRELOADING][].
+
+ * Fix starting with the Thin handler (`shotgun -s thin`)
+
+ * Actually include the shotgun(1) roff manual.
 
 ### Version 0.7 (2010 June 22)
 

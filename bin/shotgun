@@ -4,6 +4,7 @@ require 'optparse'
 
 env = ENV['RACK_ENV'] || 'development'
 browse = false
+server = nil
 public_dir = 'public' if File.directory?('public')
 options = {:Port => 9393, :Host => '127.0.0.1', :AccessLog => [], :Path => '/'}
 
@@ -110,7 +111,9 @@ require 'rack/showexceptions'
 
 require 'shotgun'
 
+require 'thin' if server.to_s.downcase == 'thin'
 server = Rack::Handler.get(server) || Rack::Handler.default
+
 app =
   Rack::Builder.new do
     # these middleware run in the master process.

@@ -11,7 +11,7 @@ module Shotgun
 
     def initialize(rackup_file, &block)
       @rackup_file = rackup_file
-      @config = block || lambda { }
+      @config = block || Proc.new { }
     end
 
     def call(env)

@@ -111,7 +111,7 @@ module Shotgun
         config = File.read(rackup_file)
         eval "Rack::Builder.new {( #{config}\n )}.to_app", nil, rackup_file
       else
-        require "./#{rackup_file}"
+        require File.expand_path(rackup_file)
         if defined? Sinatra::Application
           Sinatra::Application.set :reload, false
           Sinatra::Application.set :logging, false

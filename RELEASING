@@ -1,0 +1,8 @@
+1. update shotgun.gemspec version and date
+2. update revision history in shotgun.1
+3. rake man
+4. git add -u
+4. tag <version>
+5. rake package
+6. git push origin master <version>
+7. gem push pkg/shotgun-<version>.gem

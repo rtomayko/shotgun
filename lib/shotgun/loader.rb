@@ -118,9 +118,13 @@ module Shotgun
           Sinatra::Application.set :raise_errors, true
           Sinatra::Application
         else
-          Object.const_get(File.basename(rackup_file, '.rb').capitalize)
+          Object.const_get(camel_case(File.basename(rackup_file, '.rb')))
         end
       end
+    end
+
+    def camel_case(string)
+      string.split("_").map { |part| part.capitalize }.join
     end
 
     def spec_body(body)

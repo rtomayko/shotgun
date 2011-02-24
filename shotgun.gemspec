@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'shotgun'
-  s.version = '0.8'
-  s.date = '2010-06-23'
+  s.version = '0.9'
+  s.date = '2011-02-24'
 
   s.description = "reloading rack development server"
   s.summary     = s.description
@@ -36,6 +36,6 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = %w[README]
   s.add_dependency 'rack',    '>= 1.0'
 
-  s.homepage = "http://rtomayko.github.com/shotgun/"
+  s.homepage = "http://github.com/rtomayko/shotgun"
   s.require_paths = %w[lib]
 end

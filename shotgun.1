@@ -1,7 +1,7 @@
-.\" generated with Ronn/v0.6.42
-.\" http://github.com/rtomayko/ronn/tree/0.6.6-36-gb67d494
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "SHOTGUN" "1" "June 2010" "Shotgun 0.7" ""
+.TH "SHOTGUN" "1" "February 2011" "Shotgun 0.9" ""
 .
 .SH "NAME"
 \fBshotgun\fR \- reloading rack development server
@@ -49,8 +49,12 @@ Open browser at http://\fIhost\fR:\fIport\fR/ immediately after the server is st
 Ruby environment related options:
 .
 .TP
+\fB\-r\fR, \fB\-\-require\fR \fIlibrary\fR
+Require \fIlibrary\fR before loading the application and starting the server\. This can be used to load a portion of the application code in the master process so it doesn\'t need to be loaded in the child\. See \fIPRELOADING\fR][] for more information on this approach\.
+.
+.TP
 \fB\-e\fR, \fB\-\-eval\fR \fIcommand\fR
-Evaluate arbitrary \fIcommand\fR within the Ruby interpreter\. \fIcommand\fR is evaluated as program arguments are parsed\. Multiple \fB\-e\fR arguments are allowed\.
+Evaluate arbitrary \fIcommand\fR within the shotgun master Ruby interpreter\. \fIcommand\fR is evaluated as program arguments are parsed\. Multiple \fB\-e\fR arguments are allowed\.
 .
 .TP
 \fB\-d\fR, \fB\-\-debug\fR
@@ -64,10 +68,6 @@ Enable verbose mode without printing version message at the beginning\. It sets 
 \fB\-I\fR, \fB\-\-include\fR \fIpath\fR
 Add \fIpath\fR to the Ruby load path (\fB$LOAD_PATH\fR)\. May be used more than once\.
 .
-.TP
-\fB\-r\fR, \fB\-\-require\fR \fIlibrary\fR
-Require \fIlibrary\fR before loading the application and starting the server\.
-.
 .P
 Miscellaneous:
 .
@@ -78,6 +78,49 @@ Show usage message and exit\.
 .TP
 \fB\-\-version\fR
 Show the Rack version and exit\.
+.
+.SH "PRELOADING"
+It\'s possible to load support libraries and portions of the application in the shotgun master process to reduce the amount of work that needs to be done for each request in worker processes\. There\'s two ways of accomplishing this: either by specifying one or more \fB\-\-require\fR (\fB\-r\fR) arguments or through the use of a \fBshotgun\.rb\fR file\.
+.
+.P
+During start up, shotgun looks for a \fBshotgun\.rb\fR or \fBconfig/shotgun\.rb\fR file\. If either file is found, it\'s loaded into the shotgun master process\. Code at the top\-level of the \fBshotgun\.rb\fR is run once on startup, so just require whatever you want to preload\. It\'s also possible to register callbacks to run before each request in either the master or child worker process:
+.
+.TP
+\fBafter_fork {\fR \fIstuff\fR \fB}\fR
+Run \fIstuff\fR in the shotgun child worker process immediately after forking\. Any files or socket connections opened in the master process should be closed / re\-established by an \fBafter_fork\fR block\.
+.
+.TP
+\fBbefore_fork {\fR \fIstuff\fR \fB}\fR
+Run \fIstuff\fR in the shotgun master process on each request before forking the child worker process\. This is typically less useful than \fBafter_fork\fR, but provided for completeness\.
+.
+.P
+Example \fBconfig/shotgun\.rb\fR file from the main github\.com rails project:
+.
+.IP "" 4
+.
+.nf
+
+# make sure the load path includes RAILS_ROOT
+ENV[\'RAILS_ROOT\'] ||= File\.expand_path(\'\.\./\.\.\', __FILE__)
+$:\.unshift ENV[\'RAILS_ROOT\']
+
+# bring in the base rails environment and some libraries
+require \'config/environment\'
+require \'google\-charts\'
+require \'aws\-s3\'
+
+# disable Rails\'s built in class reloading
+Rails\.configuration\.cache_classes = true
+
+# reset database and redis connections in workers
+after_fork do
+  ActiveRecord::Base\.establish_connection
+  CHIMNEY\.client = $redis
+end
+.
+.fi
+.
+.IP "" 0
 .
 .SH "INSTALLING"
 Shotgun is distributed as a gem package at rubygems\.org:
@@ -102,10 +145,39 @@ Fork and report issues at github\.com:
 .
 .SH "VERSION HISTORY"
 .
-.SS "Version 0\.7 (unreleased)"
+.SS "Version 0\.9 (2011 February 24)"
 .
 .IP "\(bu" 4
-\fIhttp://github\.com/rtomayko/shotgun/compare/0\.6\.\.\.master\fR
+\fIhttp://github\.com/rtomayko/shotgun/compare/0\.8\.\.\.0\.9\fR
+.
+.IP "\(bu" 4
+Various Ruby 1\.9\.2 fixes\.
+.
+.IP "\(bu" 4
+Handle application class names consisting of multiple words\.
+.
+.IP "" 0
+.
+.SS "Version 0\.8 (2010 June 24)"
+.
+.IP "\(bu" 4
+\fIhttp://github\.com/rtomayko/shotgun/compare/0\.7\.\.\.0\.8\fR
+.
+.IP "\(bu" 4
+Preloading support\. The \fBshotgun\.rb\fR or \fBconfig/shotgun\.rb\fR file is loaded at startup and may require libraries and register callbacks for fork events\. See the section on \fIPRELOADING\fR\.
+.
+.IP "\(bu" 4
+Fix starting with the Thin handler (\fBshotgun \-s thin\fR)
+.
+.IP "\(bu" 4
+Actually include the shotgun(1) roff manual\.
+.
+.IP "" 0
+.
+.SS "Version 0\.7 (2010 June 22)"
+.
+.IP "\(bu" 4
+\fIhttp://github\.com/rtomayko/shotgun/compare/0\.6\.\.\.0\.7\fR
 .
 .IP "\(bu" 4
 Static files now served from the shotgun master process, making shotgun tolerable for apps with many/unbundled static assets\.

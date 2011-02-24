@@ -57,10 +57,16 @@ control server behavior:
 
 Ruby environment related options:
 
+ * `-r`, `--require` <library>:
+   Require <library> before loading the application and starting the server.
+   This can be used to load a portion of the application code in the master
+   process so it doesn't need to be loaded in the child. See [PRELOADING]][]
+   for more information on this approach.
+
  * `-e`, `--eval` <command>:
-   Evaluate arbitrary <command> within the Ruby interpreter. <command> is
-   evaluated as program arguments are parsed. Multiple `-e` arguments are
-   allowed.
+   Evaluate arbitrary <command> within the shotgun master Ruby interpreter.
+   <command> is evaluated as program arguments are parsed. Multiple `-e`
+   arguments are allowed.
 
  * `-d`, `--debug`:
    Turns on debug mode. `$DEBUG` will be set `true`.
@@ -72,9 +78,6 @@ Ruby environment related options:
  * `-I`, `--include` <path>:
    Add <path> to the Ruby load path (`$LOAD_PATH`). May be used more than once.
 
- * `-r`, `--require` <library>:
-   Require <library> before loading the application and starting the server.
-
 Miscellaneous:
 
  * `-h`, `--help`:
@@ -82,6 +85,50 @@ Miscellaneous:
 
  * `--version`:
    Show the Rack version and exit.
+
+## PRELOADING
+
+It's possible to load support libraries and portions of the application in the
+shotgun master process to reduce the amount of work that needs to be done for
+each request in worker processes. There's two ways of accomplishing this: either
+by specifying one or more `--require` (`-r`) arguments or through the use of a
+`shotgun.rb` file.
+
+During start up, shotgun looks for a `shotgun.rb` or `config/shotgun.rb` file.
+If either file is found, it's loaded into the shotgun master process. Code at
+the top-level of the `shotgun.rb` is run once on startup, so just require
+whatever you want to preload. It's also possible to register callbacks to run
+before each request in either the master or child worker process:
+
+  * `after_fork {` <stuff> `}`:
+    Run <stuff> in the shotgun child worker process immediately after forking.
+    Any files or socket connections opened in the master process should be
+    closed / re-established by an `after_fork` block.
+
+  * `before_fork {` <stuff> `}`:
+    Run <stuff> in the shotgun master process on each request before forking
+    the child worker process. This is typically less useful than `after_fork`,
+    but provided for completeness.
+
+Example `config/shotgun.rb` file from the main github.com rails project:
+
+    # make sure the load path includes RAILS_ROOT
+    ENV['RAILS_ROOT'] ||= File.expand_path('../..', __FILE__)
+    $:.unshift ENV['RAILS_ROOT']
+
+    # bring in the base rails environment and some libraries
+    require 'config/environment'
+    require 'google-charts'
+    require 'aws-s3'
+
+    # disable Rails's built in class reloading
+    Rails.configuration.cache_classes = true
+
+    # reset database and redis connections in workers
+    after_fork do
+      ActiveRecord::Base.establish_connection
+      CHIMNEY.client = $redis
+    end
 
 ## INSTALLING
 
@@ -101,9 +148,29 @@ Fork and report issues at github.com:
 
 ## VERSION HISTORY
 
-### Version 0.7 (unreleased)
+### Version 0.9 (2011 February 24)
 
- * <http://github.com/rtomayko/shotgun/compare/0.6...master>
+ * <http://github.com/rtomayko/shotgun/compare/0.8...0.9>
+
+ * Various Ruby 1.9.2 fixes.
+
+ * Handle application class names consisting of multiple words.
+
+### Version 0.8 (2010 June 24)
+
+ * <http://github.com/rtomayko/shotgun/compare/0.7...0.8>
+
+ * Preloading support. The `shotgun.rb` or `config/shotgun.rb` file is
+   loaded at startup and may require libraries and register callbacks
+   for fork events. See the section on [PRELOADING][].
+
+ * Fix starting with the Thin handler (`shotgun -s thin`)
+
+ * Actually include the shotgun(1) roff manual.
+
+### Version 0.7 (2010 June 22)
+
+ * <http://github.com/rtomayko/shotgun/compare/0.6...0.7>
 
  * Static files now served from the shotgun master process, making
    shotgun tolerable for apps with many/unbundled static assets.

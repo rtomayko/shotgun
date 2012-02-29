@@ -94,6 +94,7 @@ module Shotgun
       ], @writer)
     ensure
       @writer.close
+      body.close if body.respond_to? :close
       exit! boom ? 1 : 0
     end
 

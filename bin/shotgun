@@ -3,10 +3,12 @@
 require 'optparse'
 
 env = ENV['RACK_ENV'] || 'development'
+host = ENV['HOST'] || '127.0.0.1'
+port = ENV['PORT'] || 9393
 browse = false
 server = nil
 public_dir = 'public' if File.directory?('public')
-options = {:Port => 9393, :Host => '127.0.0.1', :AccessLog => [], :Path => '/'}
+options = {:Port => port, :Host => host, :AccessLog => [], :Path => '/'}
 
 opts = OptionParser.new("", 24, '  ') { |opts|
   opts.banner = "Usage: shotgun [ruby options] [rack options] [rackup config]"

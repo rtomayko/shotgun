@@ -46,10 +46,11 @@ control server behavior:
 
  * `-o`, `--host`=<addr>:
    The hostname or address of the interface the HTTP server should bind to.
-   Default: `127.0.0.1`.
+   Overrides the `HOST` environment variable. Default: `127.0.0.1`.
 
  * `-p`, `--port`=<port>:
-   The port the HTTP server should bind to. Default: `9393`.
+   The port the HTTP server should bind to. Overrides the `PORT` environment
+   variable. Default: `9393`.
 
  * `-O`, `--browse`:
    Open browser at http://<host>:<port>/ immediately after the server
@@ -85,6 +86,17 @@ Miscellaneous:
 
  * `--version`:
    Show the Rack version and exit.
+
+## ENVIRONMENT
+
+The following environment variables affect the configuration of `shotgun`:
+
+ * `HOST`:
+  The hostname or address of the interface the HTTP server should bind to. See
+  the `-h` option.
+
+ * `PORT`:
+   The port the HTTP server should bind to. See the `-p` option.
 
 ## PRELOADING
 

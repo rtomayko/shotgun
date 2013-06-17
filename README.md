@@ -1,4 +1,4 @@
-                                    Shotgun
+# Shotgun
 
 This is an automatic reloading version of the rackup command that's shipped with
 Rack. It can be used as an alternative to the complex reloading logic provided
@@ -11,36 +11,40 @@ the child process, processes the request, and exits the child process. The
 result is clean, application-wide reloading of all source files and templates on
 each request.
 
-Usage
------
+## Installation
 
-Installation:
+```bash
+$ gem install shotgun
+```
 
-    gem install shotgun
+## Usage
 
-Starting a server with a rackup file:
+### Starting a server with a rackup file
 
-    shotgun config.ru
+```bash
+$ shotgun config.ru
+```
 
-Using Thin and starting on port 6000 instead of 9393 (default):
+### Using Thin and starting on port 6000 instead of 9393 (default)
 
-    shotgun --server=thin --port=6000 config.ru
+```bash
+$ shotgun --server=thin --port=6000 config.ru
+```
 
-Running Sinatra apps:
+### Running Sinatra apps
 
-    shotgun hello.rb
+```bash
+$ shotgun hello.rb
+```
 
-See 'shotgun --help' for more advanced usage.
+See `shotgun --help` for more advanced usage.
 
-Links
------
+## Links
 
-Shotgun:       http://github.com/rtomayko/shotgun
-Rack:          http://rack.rubyforge.org/
-Sinatra:       http://www.sinatrarb.com/
+* [Shotgun](http://github.com/rtomayko/shotgun)
+* [Rack](http://rack.rubyforge.org/)
+* [Sinatra](http://www.sinatrarb.com/)
 
 The reloading system in Ian Bicking's webware framework served as inspiration
 for the approach taken in Shotgun. Ian lays down the pros and cons of this
-approach in the following article:
-
-http://ianbicking.org/docs/Webware_reload.html
+approach in the following article: http://ianbicking.org/docs/Webware_reload.html

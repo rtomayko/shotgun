@@ -60,7 +60,7 @@ opts = OptionParser.new("", 24, '  ') { |opts|
   opts.separator ""
   opts.separator "Shotgun options:"
 
-  opts.on("-O", "--browse", "open browser immediately after starting") { |browse|
+  opts.on("-O", "--browse", "open browser immediately after starting") {
     browse = true
   }
 

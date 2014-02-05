@@ -127,11 +127,11 @@ app =
     run Shotgun::Loader.new(config) {
       case env
       when 'development'
-        use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
+        #use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
         use Rack::ShowExceptions
         use Rack::Lint
       when 'deployment', 'production'
-        use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
+        #use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
       end
     }
   end

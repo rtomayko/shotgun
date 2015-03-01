@@ -86,6 +86,7 @@ module Shotgun
       status, headers, body = assemble_app.call(@env)
       Marshal.dump([:ok, status, headers.to_hash], @writer)
       spec_body(body).each { |chunk| @writer.write(chunk) }
+      body.close if body.respond_to?(:close)
     rescue Object => boom
       Marshal.dump([
         :error,

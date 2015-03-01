@@ -32,4 +32,19 @@ class ShotgunLoaderTest < Test::Unit::TestCase
     assert res.body =~ %r|<pre>(?:.{1023}\n){1024}</pre>|,
       "body of size #{res.body.size} does not match expected output"
   end
+
+  def test_logging
+    file = rackup_file('verbose.ru')
+
+    $logger = File.open('test/verbose.log', 'w')
+    $logger.sync = true
+
+    shotgun = Shotgun::Loader.new(file)
+    request = Rack::MockRequest.new(shotgun)
+    request.get('/', 'REMOTE_ADDR' => 'foo.local')
+
+    $logger.close
+
+    assert_match /^foo.local/, File.read('test/verbose.log')
+  end
 end

@@ -160,6 +160,13 @@ Fork and report issues at github.com:
 
 ## VERSION HISTORY
 
+### Version 0.9.1 (2015 March 1)
+
+ * Fix a long-standing issue that caused Shotgun not to show any access logs
+   in the terminal (#57).
+
+ * Make `--url` option actually work.
+
 ### Version 0.9 (2011 February 24)
 
  * <http://github.com/rtomayko/shotgun/compare/0.8...0.9>

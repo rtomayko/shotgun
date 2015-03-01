@@ -5,10 +5,11 @@ require 'optparse'
 env = ENV['RACK_ENV'] || 'development'
 host = ENV['HOST'] || '127.0.0.1'
 port = ENV['PORT'] || 9393
+mount_path = "/"
 browse = false
 server = nil
 public_dir = 'public' if File.directory?('public')
-options = {:Port => port, :Host => host, :AccessLog => [], :Path => '/'}
+options = {:Port => port, :Host => host, :AccessLog => []}
 
 opts = OptionParser.new("", 24, '  ') { |opts|
   opts.banner = "Usage: shotgun [ruby options] [rack options] [rackup config]"
@@ -64,8 +65,8 @@ opts = OptionParser.new("", 24, '  ') { |opts|
     browse = true
   }
 
-  opts.on("-u", "--url URL", "specify url path (default: /)") { |url|
-    options[:Path] = url
+  opts.on("-u", "--url URL", "specify url path (default: #{mount_path})") { |url|
+    mount_path = url
   }
 
   opts.on("-P", "--public PATH", "serve static files under PATH") { |path|
@@ -118,22 +119,25 @@ server = Rack::Handler.get(server) || Rack::Handler.default
 
 app =
   Rack::Builder.new do
-    # these middleware run in the master process.
-    use Shotgun::Static, public_dir if public_dir
-    use Shotgun::SkipFavicon
+    map(mount_path) do
 
-    # loader forks the child and runs the embedded config followed by the
-    # application config.
-    run Shotgun::Loader.new(config) {
-      case env
-      when 'development'
-        use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
-        use Rack::ShowExceptions
-        use Rack::Lint
-      when 'deployment', 'production'
-        use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
-      end
-    }
+      # these middleware run in the master process.
+      use Shotgun::Static, public_dir if public_dir
+      use Shotgun::SkipFavicon
+
+      # loader forks the child and runs the embedded config followed by the
+      # application config.
+      run Shotgun::Loader.new(config) {
+        case env
+        when 'development'
+          use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
+          use Rack::ShowExceptions
+          use Rack::Lint
+        when 'deployment', 'production'
+          use Rack::CommonLogger, STDERR  unless server.name =~ /CGI/
+        end
+      }
+    end
   end
 
 Shotgun.enable_copy_on_write
@@ -153,7 +157,7 @@ end
 # load shotgun.rb in current working directory if it exists
 Shotgun.preload
 
-base_url = "http://#{options[:Host]}:#{options[:Port]}#{options[:Path]}"
+base_url = "http://#{options[:Host]}:#{options[:Port]}#{mount_path}"
 puts "== Shotgun/#{server.to_s.sub(/Rack::Handler::/, '')} on #{base_url}"
 server.run app, options do |inst|
   if browse

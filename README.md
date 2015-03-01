@@ -39,6 +39,12 @@ Running Sinatra apps:
 
 See 'shotgun --help' for more advanced usage.
 
+Compatibility
+---
+
+Because of the underlying technique used, Shotgun is only compatible with
+systems that support `fork(2)` (probably just MRI on POSIX systems).
+
 Links
 -----
 

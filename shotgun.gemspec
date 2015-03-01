@@ -5,6 +5,7 @@ Gem::Specification.new do |s|
 
   s.description = "reloading rack development server"
   s.summary     = s.description
+  s.license = "MIT"
 
   s.authors = ["Ryan Tomayko"]
   s.email = "rtomayko@gmail.com"

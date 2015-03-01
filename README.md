@@ -54,6 +54,9 @@ Caveats
 
 * If you use Sinatra, you may need to [set the session secret manually][sinatra-caveat].
 
+* Similar to a Rackup file (`config.ru`), you can't use `require_relative` in
+  your preload files (`shotgun.rb`).
+
 Links
 -----
 

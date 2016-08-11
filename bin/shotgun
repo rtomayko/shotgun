@@ -30,6 +30,10 @@ opts = OptionParser.new("", 24, '  ') { |opts|
     $-w = true
   }
 
+  opts.on("-q", "--quiet", "turn off logging") {
+    options[:quiet] = true
+  }
+
   opts.on("-I", "--include PATH",
           "specify $LOAD_PATH (may be used more than once)") { |path|
     $LOAD_PATH.unshift(*path.split(":"))

@@ -109,8 +109,8 @@ require 'rack/utils'
 require 'rack/request'
 require 'rack/response'
 require 'rack/lint'
-require 'rack/commonlogger'
-require 'rack/showexceptions'
+require 'rack/common_logger'
+require 'rack/show_exceptions'
 
 require 'shotgun'
 

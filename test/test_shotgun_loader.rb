@@ -45,6 +45,6 @@ class ShotgunLoaderTest < Test::Unit::TestCase
 
     $logger.close
 
-    assert_match /^foo.local/, File.read('test/verbose.log')
+    assert_match(/^foo.local/, File.read('test/verbose.log'))
   end
 end

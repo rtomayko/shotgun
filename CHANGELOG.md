@@ -1,3 +1,8 @@
+0.9.2 - 2016-09-10
+==================
+
+* Fixed compatibility with Rack 2.0 (Marc-André Cournoyer, #61).
+
 0.9.1 - 2015-03-01
 ==================
 

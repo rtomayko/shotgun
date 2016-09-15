@@ -3,7 +3,7 @@
 require 'optparse'
 
 env = ENV['RACK_ENV'] || 'development'
-host = ENV['HOST'] || '127.0.0.1'
+host = ENV['HOST'] || 'localhost'
 port = ENV['PORT'] || 9393
 mount_path = "/"
 browse = false

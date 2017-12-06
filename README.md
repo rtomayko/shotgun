@@ -60,11 +60,11 @@ Caveats
 Links
 -----
 
-[Shotgun](http://github.com/rtomayko/shotgun)
+[Shotgun](https://github.com/rtomayko/shotgun)
 
-[Rack](http://rack.rubyforge.org/)
+[Rack](https://github.com/rack/rack)
 
-[Sinatra](http://www.sinatrarb.com/)
+[Sinatra](https://www.sinatrarb.com/)
 
 The reloading system in Ian Bicking's webware framework served as inspiration
 for the approach taken in Shotgun. Ian lays down the pros and cons of this

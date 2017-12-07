@@ -45,6 +45,8 @@ Compatibility
 Because of the underlying technique used, Shotgun is only compatible with
 systems that support `fork(2)` (probably just MRI on POSIX systems).
 
+[This article on macOS High Sierra's issues with this][fork-on-high-sierra] mentions a workaround: `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES`
+
 Caveats
 ---
 
@@ -73,3 +75,5 @@ approach in the following article:
 http://ianbicking.org/docs/Webware_reload.html
 
 [sinatra-caveat]: https://groups.google.com/forum/#!topic/sinatrarb/pUFSoyQXyQs
+
+[fork-on-high-sierra]: https://blog.phusion.nl/2017/10/13/why-ruby-app-servers-break-on-macos-high-sierra-and-what-can-be-done-about-it/

@@ -62,7 +62,7 @@ Links
 
 [Shotgun](http://github.com/rtomayko/shotgun)
 
-[Rack](http://rack.rubyforge.org/)
+[Rack](https://rack.github.io/)
 
 [Sinatra](http://www.sinatrarb.com/)
 

@@ -153,7 +153,7 @@ Shotgun.preload
 
 base_url = "http://#{options[:Host]}:#{options[:Port]}#{mount_path}"
 puts "== Shotgun/#{server.to_s.sub(/Rack::Handler::/, '')} on #{base_url}"
-server.run app, options do |inst|
+server.run app, **options do |inst|
   if browse
     if ENV['BROWSER']
       system "#{ENV['BROWSER']} '#{base_url}'"

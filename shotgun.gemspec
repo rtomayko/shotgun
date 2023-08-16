@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'shotgun'
-  s.version = '0.9.2'
+  s.version = '0.9.3'
 
   s.description = "Reloading Rack development server"
   s.summary     = s.description
